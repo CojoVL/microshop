@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.stereotype.Component;
 import ro.microservices.store.entities.Category;
 import ro.microservices.store.entities.Product;
@@ -11,6 +12,7 @@ import ro.microservices.store.repositories.CategoryRepository;
 import ro.microservices.store.repositories.ProductRepository;
 
 @SpringBootApplication
+@EnableEurekaClient
 public class StoreApplication {
 
 	public static void main(String[] args) {

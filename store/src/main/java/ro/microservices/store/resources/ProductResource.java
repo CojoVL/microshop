@@ -13,7 +13,7 @@ import ro.microservices.store.models.ProductModel;
 import ro.microservices.store.service.ProductService;
 
 @RestController
-@RequestMapping("api/products")
+@RequestMapping("v1/products")
 public class ProductResource {
 
     private final ProductService productService;

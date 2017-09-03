@@ -12,7 +12,7 @@ import ro.microservices.inventory.models.ProductModel;
 import ro.microservices.inventory.repositories.ProductRepository;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/v1/products")
 public class ProductResource {
 
     private final ProductRepository productRepository;
