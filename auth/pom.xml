@@ -4,17 +4,17 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>ro.microservices</groupId>
-	<artifactId>inventory</artifactId>
+	<artifactId>auth</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>inventory</name>
-	<description>Inventory project for eCommnerce</description>
+	<name>auth</name>
+	<description>Demo project for Spring Boot</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.4.RELEASE</version>
+		<version>1.5.6.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -28,38 +28,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-stream-binder-kafka</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-rest</artifactId>
+			<artifactId>spring-cloud-starter-oauth2</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-eureka</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-oauth2</artifactId>
-		</dependency>
 
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -87,5 +62,6 @@
 			</plugin>
 		</plugins>
 	</build>
+
 
 </project>

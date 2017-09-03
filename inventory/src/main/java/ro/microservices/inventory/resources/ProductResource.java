@@ -3,6 +3,7 @@ package ro.microservices.inventory.resources;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ public class ProductResource {
         this.productService = productService;
     }
 
+    @PreAuthorize("hasAuthority('READ')")
     @GetMapping(value = "/{code}")
     public ResponseEntity<ProductModel> getProductsByCode(@PathVariable("code") final String productCode) {
         return productService.getByCode(productCode)
@@ -31,6 +33,7 @@ public class ProductResource {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @PreAuthorize("hasAuthority('WRITE')")
     @PostMapping(value = "/")
     public ResponseEntity<ProductModel> addProducts(@RequestBody final ProductModel product) {
         return ResponseEntity.ok(productService.save(product));
