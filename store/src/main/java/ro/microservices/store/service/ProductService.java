@@ -31,13 +31,9 @@ public class ProductService {
                 .map(this::productToProductModel);
     }
 
-    /**
-    * Step 2
-    **/
     public List<ProductModel> getByCategoryAndInStock(final Long categoryId) {
-        return productRepository.findByCategoryId(categoryId).stream()
+        return productRepository.findByCategoryIdAndIsPublished(categoryId, true).stream()
                 .map(this::productToProductModel)
-                .filter(p -> p.getStock() > 0)
                 .collect(Collectors.toList());
     }
 

@@ -10,4 +10,5 @@ import ro.microservices.store.entities.Product;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Collection<Product> findByCode(final String code);
     Collection<Product> findByCategoryId(final Long id);
+    Collection<Product> findByCategoryIdAndIsPublished(final Long id, final Boolean published);
 }

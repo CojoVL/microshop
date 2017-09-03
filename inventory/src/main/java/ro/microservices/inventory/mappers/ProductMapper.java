@@ -12,4 +12,12 @@ public final class ProductMapper {
                 .price(product.getPrice())
                 .build();
     }
+
+    public static Product toEntity(final ProductModel productModel) {
+        return Product.builder()
+                .code(productModel.getCode())
+                .price(productModel.getPrice())
+                .stock(productModel.getStock())
+                .build();
+    }
 }
