@@ -1,34 +1,19 @@
 package ro.microservices.store.clients;
 
-import java.math.BigDecimal;
-import java.util.Objects;
+import javax.validation.constraints.NotNull;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import ro.microservices.store.clients.models.InventoryModel;
 
-@Service
-public class InventoryClient {
-    private final String apiUrl;
-    private final RestTemplate restTemplate = new RestTemplate();
+@FeignClient(name = "inventory-service", fallbackFactory = InventoryClientFallbackFactory.class)
+public interface InventoryClient {
 
-    @Autowired
-    public InventoryClient(@Value("${inventory.api.url}") final String apiUrl) {
-        this.apiUrl = Objects.requireNonNull(apiUrl, "apiUrl should not be null");
-    }
-
-    public InventoryModel getProductInventory(final String code) {
-        final String url = apiUrl + "/products/" + code;
-        try {
-            return restTemplate.getForEntity(url, InventoryModel.class).getBody();
-        } catch (HttpClientErrorException exception) {
-            return InventoryModel.builder()
-                    .price(BigDecimal.ZERO)
-                    .stock(0)
-                    .build();
-        }
-    }
+    @RequestMapping(value = "/v1/products/{code}", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<InventoryModel> getProductInventory(@PathVariable("code") @NotNull String code);
 }
