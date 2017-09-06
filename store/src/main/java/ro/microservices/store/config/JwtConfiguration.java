@@ -1,4 +1,4 @@
-package ro.microservices.inventory.config;
+package ro.microservices.store.config;
 
 import java.io.IOException;
 
@@ -27,14 +27,15 @@ public class JwtConfiguration {
 
     @Bean
     protected JwtAccessTokenConverter jwtTokenEnhancer() {
-        JwtAccessTokenConverter converter =  new JwtAccessTokenConverter();
         Resource resource = new ClassPathResource("public.cert");
+        JwtAccessTokenConverter converter =  new JwtAccessTokenConverter();
         try {
             String publicKey = new String(FileCopyUtils.copyToByteArray(resource.getInputStream()));
             converter.setVerifierKey(publicKey);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         return converter;
     }
 
