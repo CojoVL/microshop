@@ -1,5 +1,7 @@
 package ro.microservices.inventory.resources;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +29,7 @@ public class ProductResource {
 
     @PreAuthorize("hasAuthority('READ')")
     @GetMapping(value = "/{code}")
-    public ResponseEntity<ProductModel> getProductsByCode(@PathVariable("code") final String productCode) {
+    public ResponseEntity<ProductModel> getProductsByCode(@PathVariable("code") final String productCode, final Principal user) {
         return productService.getByCode(productCode)
                 .map(p -> ResponseEntity.ok(ProductMapper.toModel(p)))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
