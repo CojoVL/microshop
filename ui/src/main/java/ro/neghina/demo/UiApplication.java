@@ -1,6 +1,7 @@
-package ro.neghina.ui;
+package ro.neghina.demo;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -20,6 +21,7 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
@@ -28,6 +30,10 @@ import org.springframework.web.util.WebUtils;
 @EnableOAuth2Sso
 public class UiApplication extends WebSecurityConfigurerAdapter {
 
+	public static final String OAUTH_PATH = "/uaa/**";
+	public static final String CSRF_COOKIE_NAME = "XSRF-TOKEN";
+	public static final String CSRF_HEADER_NAME = "X-XSRF-TOKEN";
+
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(UiApplication.class, args);
 	}
@@ -35,14 +41,39 @@ public class UiApplication extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(final HttpSecurity http) throws Exception {
-		http
-			.authorizeRequests().anyRequest().authenticated()
+		http.authorizeRequests()
+				.antMatchers(OAUTH_PATH).permitAll()
+				.anyRequest().authenticated()
 			.and()
-			.csrf().csrfTokenRepository(csrfTokenRepository())
-			.and()
-			.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class)
+			.csrf()
+				.requireCsrfProtectionMatcher(csrfRequestMatcher())
+				.csrfTokenRepository(csrfTokenRepository())
+				.and()
+				.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class)
 			.logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+				.logoutSuccessUrl("/uaa/logout")
 				.clearAuthentication(true).invalidateHttpSession(true);
+	}
+
+	private RequestMatcher csrfRequestMatcher() {
+		return new RequestMatcher() {
+			private final Pattern allowedMethods = Pattern.compile("^(GET|HEAD|OPTIONS|TRACE)$");
+			private final AntPathRequestMatcher[] requestMatchers = { new AntPathRequestMatcher(OAUTH_PATH) };
+
+			@Override
+			public boolean matches(HttpServletRequest request) {
+				if (allowedMethods.matcher(request.getMethod()).matches()) {
+					return false;
+				}
+
+				for (AntPathRequestMatcher matcher : requestMatchers) {
+					if (matcher.matches(request)) {
+						return false;
+					}
+				}
+				return true;
+			}
+		};
 	}
 
 	private Filter csrfHeaderFilter() {
@@ -52,10 +83,10 @@ public class UiApplication extends WebSecurityConfigurerAdapter {
 											final FilterChain filterChain) throws ServletException, IOException {
 				CsrfToken csrf = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
 				if (csrf != null) {
-					Cookie cookie = WebUtils.getCookie(request, "XSRF-TOKEN");
+					Cookie cookie = WebUtils.getCookie(request, CSRF_COOKIE_NAME);
 					String token = csrf.getToken();
 					if (cookie == null || token != null && !token.equals(cookie.getValue())) {
-						cookie = new Cookie("XSRF-TOKEN", token);
+						cookie = new Cookie(CSRF_COOKIE_NAME, token);
 						cookie.setPath("/");
 						response.addCookie(cookie);
 					}
@@ -67,7 +98,7 @@ public class UiApplication extends WebSecurityConfigurerAdapter {
 
 	private CsrfTokenRepository csrfTokenRepository() {
 		HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
-		repository.setHeaderName("X-XSRF-TOKEN");
+		repository.setHeaderName(CSRF_HEADER_NAME);
 		return repository;
 	}
 

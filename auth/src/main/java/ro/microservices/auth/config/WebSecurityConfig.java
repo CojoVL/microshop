@@ -35,12 +35,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .formLogin().loginPage("/login").permitAll()
             .and()
-            .requestMatchers().antMatchers("/", "/logout", "/login", "/oauth/authorize", "/oauth/confirm_access")
-            .and()
             .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .clearAuthentication(true).invalidateHttpSession(true)
+                .clearAuthentication(true).invalidateHttpSession(true).permitAll()
             .and()
-            .authorizeRequests().anyRequest().authenticated();
+            .authorizeRequests()
+                .antMatchers("/logout", "/login", "/oauth/authorize", "/oauth/confirm_access").permitAll()
+                .anyRequest().authenticated();
     }
 
     @Override
